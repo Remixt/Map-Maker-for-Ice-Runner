@@ -9,3 +9,5 @@
 * Once you save the map it needs to be moved into the appropriate player folder for the game. 
  *(Ex. IceRunner/res/player1/maps)
 * Once your map is in the appropriate folder you can either restart the game, OR you can go to the main menu and hit the "load maps" button. The game will then automatically load any new maps in either the player 1 or player 2 folder.
+
+![picture alt](https://github.com/Remixt/Map-Maker-for-Ice-Runner/blob/master/pic1.PNG?raw=true "Small Size Map Editing Example")
