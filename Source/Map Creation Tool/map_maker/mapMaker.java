@@ -33,6 +33,21 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.RenderingHints;
+import javax.swing.BoxLayout;
+import java.awt.FlowLayout;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.Rectangle;
+import java.awt.GridBagLayout;
+import java.awt.ComponentOrientation;
+import javax.swing.border.EtchedBorder;
+import java.awt.Cursor;
+import net.miginfocom.swing.MigLayout;
+import javax.swing.SpringLayout;
+import javax.swing.border.TitledBorder;
+import javax.swing.border.EmptyBorder;
+import java.awt.GridLayout;
+import javax.swing.border.BevelBorder;
 
 public class mapMaker {
 
@@ -65,6 +80,7 @@ public class mapMaker {
 	ImageIcon goalIcon; // icon that represents the finishing tile in game
 	ImageIcon playerIcon; // icon that represents the starting point in game
 
+	GridLayout mapGridLayout = new GridLayout(13, 13, 1, 1);
 	int activeNum = 1;
 	boolean hasPlayerIcon = false; // Check to see if there is already a
 									// starting tile on the map
@@ -106,23 +122,36 @@ public class mapMaker {
 	}
 
 	public void setBounds() {
+	    Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
+
 		if (mapSize == 15) {
-			frmIceRunnerMap.setBounds(100, 100, (53 * mapSize), (51 * mapSize) + 7);
+			panel.removeAll();
+			mapGridLayout.setColumns(13);
+			mapGridLayout.setRows(13);
+			rebuildGrid();
+			panel.repaint();
 		}
 		if (mapSize == 20) {
-			frmIceRunnerMap.setBounds(100, 100, (54 * mapSize), (52 * mapSize) + 7);
+			panel.removeAll();
+			mapGridLayout.setColumns(18);
+			mapGridLayout.setRows(18);
+			rebuildGrid();
+			panel.repaint();
 		}
 		if (mapSize == 25) {
-			frmIceRunnerMap.setBounds(100, 100, (54 * mapSize), (52 * mapSize) + 25);
+			panel.removeAll();
+			mapGridLayout.setColumns(23);
+			mapGridLayout.setRows(23);
+			rebuildGrid();
+			panel.repaint();
 		}
 	}
 
 	// set the maximum number of editable tiles
-	public void setMapDimension() {
-		mapDimension = ((mapSize - 2) * (mapSize - 2));
-	}
 
-	// set the maximum number of tiles allowed in the map including the border
+
+	// set the mgetContentPane().setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
+		//frmIceRunnerMap.aximum number of tiles allowed in the map including the border
 	public void setMaxWalls() {
 		maxWalls = (mapSize * mapSize);
 	}
@@ -136,20 +165,28 @@ public class mapMaker {
 	private void initialize() {
 		setActiveIcon(wallIcon);
 		frmIceRunnerMap = new JFrame();
+		frmIceRunnerMap.setVisible(true);
+		frmIceRunnerMap.setSize(new Dimension(820, 800));
+		frmIceRunnerMap.setPreferredSize(new Dimension(800, 800));
+		frmIceRunnerMap.getContentPane().setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
+		frmIceRunnerMap.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
+		frmIceRunnerMap.setAlwaysOnTop(true);
 		frmIceRunnerMap.setIconImage(Toolkit.getDefaultToolkit().getImage(mapMaker.class.getResource("/map_maker/res/snowflake-512.png")));
-		frmIceRunnerMap.setTitle("Ice Runner Map Creation");
+		frmIceRunnerMap.setTitle("Ice Runner Map Maker");
 		frmIceRunnerMap.setResizable(false);
 		frmIceRunnerMap.getContentPane().setBackground(Color.DARK_GRAY);
-		setBounds();
 		frmIceRunnerMap.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
+		
 		frmIceRunnerMap.setBackground(Color.DARK_GRAY);
+		frmIceRunnerMap.getContentPane().setLayout(new BorderLayout(0, 0));
 		JToolBar toolBar = new JToolBar();
+		toolBar.setFocusTraversalKeysEnabled(false);
+		toolBar.setBorder(new EmptyBorder(0, 0, 0, 0));
+		toolBar.setOrientation(SwingConstants.VERTICAL);
 		toolBar.setFloatable(false);
 		toolBar.setToolTipText("Toolbar");
 		toolBar.setRollover(true);
 		toolBar.setBackground(Color.DARK_GRAY);
-		toolBar.setOrientation(SwingConstants.VERTICAL);
 		frmIceRunnerMap.getContentPane().add(toolBar, BorderLayout.WEST);
 
 		JButton btnWall = new JButton("");
@@ -225,10 +262,6 @@ public class mapMaker {
 
 		toolBar.add(btnLarge);
 
-		panel = new JPanel();
-		panel.setBackground(Color.BLACK);
-		frmIceRunnerMap.getContentPane().add(panel, BorderLayout.CENTER);
-
 		JMenuBar menuBar = new JMenuBar();
 		frmIceRunnerMap.getContentPane().add(menuBar, BorderLayout.NORTH);
 		menuBar.setBackground(Color.GRAY);
@@ -251,6 +284,16 @@ public class mapMaker {
 			}
 		});
 		mnFile.add(mntmExit);
+												
+														panel = new JPanel();
+														panel.setAlignmentY(0.0f);
+														panel.setAlignmentX(0.0f);
+														panel.setAutoscrolls(true);
+														frmIceRunnerMap.getContentPane().add(panel);
+														panel.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+														panel.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
+														panel.setBackground(Color.BLACK);
+														panel.setLayout(mapGridLayout);
 		mapGridList = new ArrayList<JLabel>();
 
 		btnSmall.addActionListener(new ActionListener() {
@@ -261,7 +304,6 @@ public class mapMaker {
 				mapSize = 15;
 				difficulty = 1;
 				setBounds();
-				rebuildGrid();
 			}
 		});
 
@@ -274,7 +316,6 @@ public class mapMaker {
 				difficulty = 3;
 				setEmptyIcon(getScaledImage(getEmptyIcon(),25,25));
 				setBounds();
-				rebuildGrid();
 			}
 		});
 
@@ -286,7 +327,6 @@ public class mapMaker {
 				mapSize = 20;
 				difficulty = 2;
 				setBounds();
-				rebuildGrid();
 			}
 		});
 
@@ -542,7 +582,7 @@ public class mapMaker {
 					int y;
 					int z = mapSize - 2; // editable region of the map will be 2
 											// less than the actual maps size.
-					for (int i = 1; i < (mapDimension + 1); i++) {
+					for (int i = 1; i < (z); i++) {
 						if (((i - 1) % z) > 0) {
 							x = (i - 1) / z;
 							y = (i - 1) % z;
@@ -582,16 +622,14 @@ public class mapMaker {
 
 	public void rebuildGrid() {
 		// Build the map grid
-		setMapDimension();
 		setMaxWalls();
 		mapGridList.clear();
-		panel.removeAll();
 		for (int i = 0; i < ((mapSize - 2) * (mapSize - 2)); i++) {
 			JLabel label = new JLabel();
 			mapGridList.add(label);
 			label.setIcon(getEmptyIcon());
-			label.setBounds(0, 0, 25, 25);
 			panel.add(label);
+			panel.revalidate();
 			label.addMouseListener(new MouseListener() {
 
 				@Override
